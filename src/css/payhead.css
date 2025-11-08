@@ -1,0 +1,180 @@
+/* Payhead Management Tab Styles */
+
+#payheads-section {
+  padding: 20px;
+}
+
+/* Header styling */
+.payhead-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.section-title {
+  color: #212529 !important;
+  font-family: Tahoma, Geneva, Verdana, sans-serif !important;
+  font-size: 24px !important;
+  font-weight: 400 !important;
+  margin: 0 0 8px 0 !important;
+  background: none !important;
+  padding: 0 !important;
+  line-height: 1.2 !important;
+  text-align: left !important;
+}
+
+/* Search input styling removed */
+
+/* Add Payhead button */
+.payhead-add-btn {
+  background-color: #17423B;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 15px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Add gap between icon and text */
+  justify-content: center; /* Center icon and text horizontally */
+}
+
+.payhead-add-btn i, .payhead-add-btn .icon {
+  display: inline-flex;
+  align-items: center;
+  font-size: 16px;
+  margin-right: 0px;
+  transition: transform 0.4s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+.payhead-add-btn:hover i, .payhead-add-btn:hover .icon {
+  transform: rotate(360deg);
+}
+
+.payhead-add-btn:hover {
+  background-color: #0F3229;
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 4px 12px rgba(23, 66, 59, 0.18);
+}
+
+/* Filter row styling removed */
+
+/* Tables container */
+.payhead-tables-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.payhead-table-section {
+  flex: 1;
+  min-width: 300px;
+  overflow: hidden;
+}
+
+.payhead-table-title {
+  font-size: 16px;
+  font-weight: 600;
+  padding: 12px 15px;
+  margin: 0;
+  color: #333;
+  background-color: #f9f9f9;
+}
+
+.payhead-table-wrapper {
+  background-color: #fff;
+  overflow: hidden;
+}
+
+.payhead-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  border: 1px solid #ddd;
+}
+
+.payhead-table tr:hover {
+  background-color: #f5f5f5;
+}
+
+.payhead-table th:first-child,
+.payhead-table td:first-child {
+  width: 50%;
+}
+
+.payhead-table th:nth-child(2),
+.payhead-table td:nth-child(2) {
+  width: 25%;
+}
+
+.payhead-table th:nth-child(3),
+.payhead-table td:nth-child(3) {
+  width: 25%;
+}
+
+.payhead-table thead {
+  background-color: #f9f9f9;
+}
+
+.payhead-table th {
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+  border: 1px solid #ddd;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.payhead-table td {
+  padding: 12px 15px;
+  font-size: 14px;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+/* Keep actions tidy and prevent overlap */
+.payhead-table td:nth-child(3) {
+  white-space: nowrap;
+}
+.payhead-table td:nth-child(3) .action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 6px;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .payhead-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .payhead-search-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 10px 0;
+  }
+  
+  .payhead-filter-row {
+    flex-direction: column;
+  }
+  
+  .payhead-filter-btn {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .payhead-tables-container {
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Electron Payroll Management System</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dialog.css">
+  <link rel="stylesheet" href="css/signature.css">
+  <link rel="stylesheet" href="css/settings.css">
+  <link rel="stylesheet" href="css/reports.css">
+  <link rel="stylesheet" href="css/attendance.css">
+  <link rel="stylesheet" href="css/payslip.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+  <div class="wrapper">
+    <!-- Sidebar -->
+    <nav id="sidebar">
+      <div class="sidebar-header">
+        <div class="d-flex align-items-center justify-content-center">
+          <div class="logo-container">
+            <img src="../assets/images/logo.png" alt="Logo" class="logo-image">
+          </div>
+          <h3>DASH</h3>
+        </div>
+      </div>
+
+      <ul class="list-unstyled components">
+        <li class="active">
+          <a href="#" id="nav-dashboard"><i class="fas fa-th-large"></i> Overview</a>
+        </li>
+        <li>
+          <a href="#" id="nav-employees"><i class="fas fa-users"></i> Employees</a>
+        </li>
+        <li>
+          <a href="#" id="nav-attendance"><i class="fas fa-clock"></i> Attendance</a>
+        </li>
+        <li>
+          <a href="#" id="nav-payheads"><i class="fas fa-list-alt"></i> Pay heads</a>
+        </li>
+        <li>
+          <a href="#" id="nav-salary"><i class="fas fa-money-bill-wave"></i> Salary Management</a>
+        </li>
+        <li>
+          <a href="#" id="nav-reports"><i class="fas fa-file-alt"></i> Reports</a>
+        </li>
+        <li>
+          <a href="#" id="nav-settings"><i class="fas fa-cog"></i> Settings</a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Page Content -->
+    <div id="content">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+          <div class="d-flex align-items-center">
+            <button type="button" id="sidebarCollapse" class="btn btn-info">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <h4 id="page-title">Dashboard</h4>
+          </div>
+          <div class="admin-dropdown">
+            <button class="admin-dropdown-btn" id="adminDropdownBtn">Admin <i class="fas fa-chevron-down"></i></button>
+            <div class="admin-dropdown-content" id="adminDropdownContent">
+              <a href="#" id="logoutBtn">Logout</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Main content area -->
+      <div class="container-fluid">
+        <!-- Dashboard section -->
+        <div id="dashboard-section" class="content-section active">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="info-card">
+                <div class="info-card-content">
+                  <div class="info-card-icon">
+                    <img src="../assets/images/employee-3d.png" alt="Employees Icon">
+                  </div>
+                  <div class="info-card-text">
+                    <h5>Total Number Of Employees</h5>
+                    <h2 id="total-employees">0</h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="info-card">
+                <div class="info-card-content">
+                  <div class="info-card-icon">
+                    <img src="../assets/images/money.png" alt="Payroll Icon">
+                  </div>
+                  <div class="info-card-text">
+                    <h5>Total of Monthly Payroll</h5>
+                    <h2 id="total-amount">₱0</h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="info-card">
+                <div class="info-card-content">
+                  <div class="info-card-icon">
+                    <img src="../assets/images/schedule.png" alt="Pending Icon">
+                  </div>
+                  <div class="info-card-text">
+                    <h5>Generated Payslip</h5>
+                    <h2 id="generated-payslip">0</h2>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <div class="chart-container">
+                <h5>Monthly Salary Distribution</h5>
+                <canvas id="salary-chart"></canvas>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="chart-container">
+                <h5>Department Distribution</h5>
+                <canvas id="department-chart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Employees section -->
+        <div id="employees-section" class="content-section">
+          <div class="section-header">
+            <h4 class="section-title">Employee Management</h4>
+          </div>
+          
+          <div class="employee-controls mb-4">
+            <div class="employee-controls-row">
+              <div class="search-container">
+                <input type="text" id="employee-search" class="search-input" placeholder="Search...">
+                <i class="fas fa-search search-icon"></i>
+              </div>
+              <div class="filter-dropdown">
+                <button class="quick-filter-btn" data-filter="department">
+                  <span>Department</span> <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="dropdown-menu" id="department-dropdown">
+                  <div class="dropdown-item" data-value="all">All Departments</div>
+                  <div class="dropdown-item" data-value="IT">IT</div>
+                  <div class="dropdown-item" data-value="HR">HR</div>
+                  <div class="dropdown-item" data-value="Finance">Finance</div>
+                  <div class="dropdown-item" data-value="Marketing">Marketing</div>
+                </div>
+              </div>
+              <div class="filter-dropdown">
+                <button class="quick-filter-btn" data-filter="status">
+                  <span>Status</span> <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="dropdown-menu" id="status-dropdown">
+                  <div class="dropdown-item" data-value="all">All Status</div>
+                  <div class="dropdown-item" data-value="active">Active</div>
+                  <div class="dropdown-item" data-value="inactive">Inactive</div>
+                  <div class="dropdown-item" data-value="leave">On Leave</div>
+                </div>
+              </div>
+              <button id="add-employee-btn" class="add-employee-btn">Add New Employee</button>
+            </div>
+          </div>
+          
+          <div class="employee-stats-row">
+
+            <div class="employee-stat-card">
+              <div class="stat-icon active"><i class="fas fa-user-check"></i></div>
+              <div class="stat-content">
+                <h5>Active</h5>
+                <h3 id="active-count">0</h3>
+              </div>
+            </div>
+            <div class="employee-stat-card">
+              <div class="stat-icon inactive"><i class="fas fa-user-times"></i></div>
+              <div class="stat-content">
+                <h5>Inactive</h5>
+                <h3 id="inactive-count">0</h3>
+              </div>
+            </div>
+            <div class="employee-stat-card">
+              <div class="stat-icon leave"><i class="fas fa-user-clock"></i></div>
+              <div class="stat-content">
+                <h5>On Leave</h5>
+                <h3 id="leave-count">0</h3>
+              </div>
+            </div>
+          </div>
+          
+          <div class="employee-table-container">
+            <table class="table" id="employees-table">
+              <thead>
+                <tr>
+                  <th class="th-employee-id">Employee ID</th>
+                  <th class="th-name">Name</th>
+                  <th class="th-department">Department</th>
+                  <th class="th-position">Position</th>
+                  <th class="th-status">Status</th>
+                  <th class="th-action">Action</th>
+                </tr>
+              </thead>
+              <tbody id="employees-list">
+                <!-- Employee data will be loaded here -->
+              </tbody>
+            </table>
+            <div class="table-empty-state" id="no-employees-message" style="display: none;">
+              <div class="empty-state-icon"><i class="fas fa-users"></i></div>
+              <h4>No employees found</h4>
+              <p>Try adjusting your search or add a new employee</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payheads section -->
+        <div id="payheads-section" class="content-section">
+          <div class="section-header">
+            <h4 class="section-title">Payheads Management</h4>
+            <button id="add-payhead-btn" class="payhead-add-btn"><i class="fas fa-plus"></i> Add Payhead</button>
+          </div>
+          <div class="payhead-tables-container">
+            <div class="payhead-table-section">
+              <h5 class="payhead-table-title">Earnings</h5>
+              <div class="payhead-table-wrapper">
+                <table class="payhead-table" id="earnings-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Value</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="earnings-list">
+                    <!-- Earnings payheads will be loaded dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="payhead-table-section">
+              <h5 class="payhead-table-title">Deductions</h5>
+              <div class="payhead-table-wrapper">
+                <table class="payhead-table" id="deductions-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Value</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="deductions-list">
+                    <!-- Deductions payheads will be loaded dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Salary Management section -->
+        <div id="salary-section" class="content-section">
+          <div class="section-header">
+            <h4 class="section-title">Salary Management</h4>
+          </div>
+
+          <div class="employee-controls">
+            <div class="employee-controls-row">
+              <div class="search-container">
+                <input type="text" id="salary-search" class="search-input" placeholder="Search salaries...">
+                <i class="fas fa-search search-icon"></i>
+              </div>
+              <button id="generate-salary-btn" class="add-employee-btn"><i class="fas fa-plus-circle mr-2"></i> Generate Salary</button>
+            </div>
+          </div>
+
+          <div class="salary-controls">
+            <div style="flex: 1;">
+              <label for="salary-month" class="filter-label">Month</label>
+              <div class="month-selector">
+                <select id="salary-month" class="form-select">
+                  <option value="1">January</option>
+                  <option value="2">February</option>
+                  <option value="3">March</option>
+                  <option value="4">April</option>
+                  <option value="5">May</option>
+                  <option value="6">June</option>
+                  <option value="7">July</option>
+                  <option value="8">August</option>
+                  <option value="9">September</option>
+                  <option value="10">October</option>
+                  <option value="11">November</option>
+                  <option value="12">December</option>
+                </select>
+              </div>
+            </div>
+            <div style="flex: 1;">
+              <label for="salary-year" class="filter-label">Year</label>
+              <div class="year-selector">
+                <select id="salary-year" class="form-select">
+                  <!-- Years will be dynamically populated -->
+                </select>
+              </div>
+            </div>
+            <div class="filter-button-container" style="margin-top: 0;">
+              <button id="filter-salary-btn" class="filter-btn">Filter</button>
+            </div>
+          </div>
+          
+          <div class="card mt-4">
+            <div class="card-body">
+              <div class="table-responsive">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <div class="d-flex gap-2">
+                    <button id="delete-selected-salaries-btn" class="btn btn-outline-danger btn-sm"><i class="fas fa-trash"></i> Delete Selected</button>
+                    <button id="print-selected-salaries-btn" class="btn btn-outline-primary btn-sm"><i class="fas fa-print"></i> Print Selected</button>
+                  </div>
+                  <div class="text-muted small" id="selected-count">0 selected</div>
+                </div>
+                <table class="table table-hover" id="salary-table">
+                  <thead>
+                    <tr>
+                      <th style="width:32px;"><input type="checkbox" id="salary-select-all"></th>
+                      <th>Employee</th>
+                      <th>Month</th>
+                      <th>Year</th>
+                      <th>Cycle</th>
+                      <th>Week/Half</th>
+                      <th>Total Earnings</th>
+                      <th>Total Deductions</th>
+                      <th>Net Salary</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="salary-list">
+                    <!-- Salary records will be loaded here -->
+                  </tbody>
+                </table>
+                <div id="no-salaries-message" class="text-center p-3" style="display: none;">
+                  <p>No salary records found. Generate a new salary using the button above.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Attendance section -->
+        <div id="attendance-section" class="content-section">
+          <div class="section-header">
+            <h4 class="section-title">Attendance Management</h4>
+          
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Recent Attendance</h5>
+                  <div class="attendance-history">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Employee</th>
+                          <th>Date</th>
+                          <th>Time</th>
+                          <th>Type</th>
+                          
+                        </tr>
+                      </thead>
+                      <tbody id="attendance-history-body">
+                        <!-- Attendance records will be loaded here -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reports section -->
+        <div id="reports-section" class="content-section">
+          <h4>Available Reports</h4>
+          <div id="report-cards" class="row">
+            <div class="col-md-4">
+              <div class="card">
+                <div class="card-body">
+                  <img src="../assets/images/employee-3d.png" alt="Employee Report">
+                  <div>
+                    <h5 class="card-title">Employee Report</h5>
+                    <button id="employee-report-btn" class="btn-generate">Generate</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card">
+                <div class="card-body">
+                  <img src="../assets/images/money.png" alt="Salary Report">
+                  <div>
+                    <h5 class="card-title">Salary Report</h5>
+                    <button id="salary-report-btn" class="btn-generate">Generate</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card">
+                <div class="card-body">
+                  <img src="../assets/images/department.png" alt="Department Report">
+                  <div>
+                    <h5 class="card-title">Department Report</h5>
+                    <button id="department-report-btn" class="btn-generate">Generate</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings section -->
+        <div id="settings-section" class="content-section">
+          <h4>Settings</h4>
+          <div id="settings-tab" class="row">
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">General Settings</h5>
+                  <form id="company-form">
+                    <div class="mb-4">
+                      <h6 class="mb-3">Company Information</h6>
+                      <div class="form-group mb-3">
+                        <label for="company-name" class="mb-2">Branch Name</label>
+                        <input type="text" class="form-control" id="company-name">
+                      </div>
+                      <div class="form-group mb-3">
+                        <label for="company-address" class="mb-2">Branch Adress</label>
+                        <textarea class="form-control" id="company-address" rows="3"></textarea>
+                      </div>
+                      <div class="form-group mb-3">
+                        <label for="company-email" class="mb-2">Email</label>
+                        <input type="email" class="form-control" id="company-email">
+                      </div>
+                      <div class="form-group mb-3">
+                        <label for="company-phone" class="mb-2">Telephone Number</label>
+                        <input type="text" class="form-control" id="company-phone">
+                      </div>
+                    </div>
+                    <div class="d-grid">
+                      <button type="submit" class="btn btn-dark">Save</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Application Settings</h5>
+                  <form id="app-settings-form">
+                    <div class="form-group mb-3">
+                      <label for="currency-symbol" class="mb-2">Currency Symbol</label>
+                      <input type="text" class="form-control" id="currency-symbol" value="₱">
+                    </div>
+                    <div class="form-group mb-3">
+                      <label for="date-format" class="mb-2">Date Format</label>
+                      <select class="form-control" id="date-format">
+                        <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                        <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                        <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                      </select>
+                    </div>
+                    <div class="form-check mb-4">
+                      <input type="checkbox" class="form-check-input" id="dark-mode">
+                      <label class="form-check-label" for="dark-mode">Dark Mode</label>
+                    </div>
+                    <div class="d-grid">
+                      <button type="submit" class="btn btn-dark">Save</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Backup & Restore Section -->
+          <div class="row mt-4">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Data Backup & Restore</h5>
+                  <p class="text-muted mb-4">Protect your data by creating backups and restore from previous backups.</p>
+                  
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="mb-3">
+                        <h6 class="mb-2">Export Backup</h6>
+                        <p class="small text-muted mb-3">Create a backup file containing all your employees, payheads, attendance, and salary data.</p>
+                        <button type="button" class="btn btn-dark" id="export-backup-btn">
+                          <i class="fas fa-download mr-2"></i>Export Backup
+                        </button>
+                        <button type="button" class="btn btn-outline-primary ml-2" id="export-cloud-backup-btn">
+                          <i class="fas fa-cloud-upload-alt mr-2"></i>Export to Cloud
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <div class="mb-3">
+                        <h6 class="mb-2">Import Backup</h6>
+                        <p class="small text-muted mb-3">Restore data from a previously created backup file. This will replace current data.</p>
+                        <input type="file" id="import-backup-file" accept=".json" style="display: none;">
+                        <button type="button" class="btn btn-outline-dark" id="import-backup-btn">
+                          <i class="fas fa-upload mr-2"></i>Import Backup
+                        </button>
+                        <button type="button" class="btn btn-outline-primary ml-2" id="import-cloud-backup-btn">
+                          <i class="fas fa-cloud-download-alt mr-2"></i>Restore from Cloud
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <p class="small text-muted mt-2">
+                    Cloud backup uses Supabase. Ensure network is online and the `backups` table exists.
+                  </p>
+                  
+                  <div class="alert alert-warning mt-3" role="alert">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    <strong>Important:</strong> Importing a backup will replace all current data. Make sure to export a current backup before importing.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for adding/editing employees -->
+  <div class="modal fade" id="employee-modal" tabindex="-1" role="dialog" aria-labelledby="employeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="employeeModalLabel">Add Employee</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="employee-form">
+            <input type="hidden" id="employee-id">
+            <input type="hidden" id="employee-signature-data">
+            <div class="form-group">
+              <label for="employee-name">Full Name</label>
+              <input type="text" class="form-control" id="employee-name" required>
+            </div>
+            <div class="form-group">
+              <label for="employee-birthday">Birthday</label>
+              <input type="date" class="form-control" id="employee-birthday" required>
+            </div>
+            <div class="form-group">
+              <label for="employee-address">Address</label>
+              <textarea class="form-control" id="employee-address" rows="2" required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="employee-phone">Telephone Number</label>
+              <input type="text" class="form-control" id="employee-phone" required inputmode="numeric" maxlength="9" pattern="(?:\d{9}|[Nn]/[Aa])" title="Enter 9 digits or N/A">
+            </div>
+            <div class="form-group">
+              <label for="employee-email">Email</label>
+              <input type="text" class="form-control" id="employee-email" required pattern="(?:.+@.+\..+|[Nn]/[Aa])" title="Enter a valid email or N/A">
+            </div>
+            <div class="form-group">
+              <label for="employee-sss">SSS Id Number</label>
+              <input type="text" class="form-control" id="employee-sss" required inputmode="numeric" maxlength="10" pattern="(?:\d{10}|[Nn]/[Aa])" title="Enter 10 digits or N/A">
+            </div>
+            <div class="form-group">
+              <label for="employee-tin">Tin Id Number</label>
+              <input type="text" class="form-control" id="employee-tin" required inputmode="numeric" maxlength="12" pattern="(?:\d{12}|[Nn]/[Aa])" title="Enter 12 digits or N/A">
+            </div>
+            <div class="form-group">
+              <label for="employee-philhealth">Philhealth Id Number</label>
+              <input type="text" class="form-control" id="employee-philhealth" required inputmode="numeric" maxlength="12" pattern="(?:\d{12}|[Nn]/[Aa])" title="Enter 12 digits or N/A">
+            </div>
+            <div class="form-group">
+              <label for="employee-mother">Mother's Name</label>
+              <input type="text" class="form-control" id="employee-mother" required>
+            </div>
+            <div class="form-group">
+              <label for="employee-father">Father's Name</label>
+              <input type="text" class="form-control" id="employee-father" required>
+            </div>
+            <div class="form-group">
+              <label for="employee-emergency-contact">Emergency Contact Number</label>
+              <input type="text" class="form-control" id="employee-emergency-contact" required inputmode="numeric" maxlength="9" pattern="(?:\d{9}|[Nn]/[Aa])" title="Enter 9 digits or N/A">
+            </div>
+            <div class="form-group department-group">
+              <label for="employee-department">Department</label>
+              <input type="text" class="form-control" id="employee-department" required placeholder="Select or type a department" autocomplete="off">
+              <datalist id="existing-department-list"></datalist>
+              <div id="department-suggestions" class="dept-suggestions" role="listbox" aria-label="Department suggestions"></div>
+              
+            </div>
+            <div class="form-group position-group">
+              <label for="employee-designation">Position</label>
+              <input type="text" class="form-control" id="employee-designation" required placeholder="Select or type a position" autocomplete="off">
+              <datalist id="position-options">
+                <option value="Supervisor"></option>
+                <option value="Head Casher"></option>
+                <option value="Casher"></option>
+                <option value="Guard"></option>
+                <option value="Diser"></option>
+                <option value="Maintenance"></option>
+              </datalist>
+              <div id="position-suggestions" class="dept-suggestions" role="listbox" aria-label="Position suggestions"></div>
+            </div>
+            <div class="form-group">
+              <label for="employee-join-date">Join Date</label>
+              <input type="date" class="form-control" id="employee-join-date" required>
+            </div>
+            <div class="form-group">
+              <label for="employee-basic-salary">Basic Salary</label>
+              <input type="number" class="form-control" id="employee-basic-salary" required>
+            </div>
+
+            <!-- Employee Signature (one-time capture) -->
+            <div id="employee-signature-section" class="row mb-3 p-2" style="background-color: #f8f9fa; border-radius: 5px;">
+              <div class="col-12">
+                <h6 class="mb-2">Employee Digital Signature</h6>
+                <p class="small text-muted mb-2">Sign once here; used for all payslips.</p>
+              </div>
+              <div class="col-md-12">
+                <div class="signature-pad-container">
+                  <canvas id="signature-pad"></canvas>
+                </div>
+                <div class="signature-buttons mt-2">
+                  <button type="button" class="btn btn-sm btn-outline-secondary" id="clear-signature-btn">Clear Signature</button>
+                  <button type="button" class="btn btn-sm btn-outline-danger ml-2" id="delete-signature-btn">Remove Signature</button>
+                </div>
+                <img id="signature-preview" class="signature-preview mt-2" alt="Signature Preview">
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="action-btn" data-dismiss="modal">Close</button>
+          <button type="button" class="add-employee-btn" id="save-employee-btn">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for adding/editing payheads -->
+  <div class="modal fade" id="payhead-modal" tabindex="-1" role="dialog" aria-labelledby="payheadModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="payheadModalLabel">Add Payhead</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="payhead-form">
+            <input type="hidden" id="payhead-id">
+            <div class="form-group">
+              <label for="payhead-name">Name</label>
+              <input type="text" class="form-control" id="payhead-name" required>
+            </div>
+            <div class="form-group">
+              <label for="payhead-description">Description</label>
+              <textarea class="form-control" id="payhead-description" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="payhead-type">Type</label>
+              <select class="form-control" id="payhead-type" required>
+                <option value="">Select Type</option>
+                <option value="earning">Earning</option>
+                <option value="deduction">Deduction</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="payhead-value-type">Value Type</label>
+              <select class="form-control" id="payhead-value-type">
+                <option value="percentage">Percentage</option>
+                <option value="amount">Fixed Amount</option>
+              </select>
+            </div>
+            <div class="form-group" id="payhead-percentage-group">
+              <label for="payhead-percentage">Percentage (%)</label>
+              <input type="number" class="form-control" id="payhead-percentage" placeholder="e.g. 10" min="0" step="0.01">
+              <small class="text-muted">If percentage, auto-calculates from Basic Salary in payslip</small>
+            </div>
+            <div class="form-group" id="payhead-amount-group" style="display:none;">
+              <label for="payhead-amount">Amount</label>
+              <input type="number" class="form-control" id="payhead-amount" placeholder="e.g. 1000" min="0" step="0.01">
+              <small class="text-muted">If amount, used as-is during payslip generation</small>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="action-btn" data-dismiss="modal">Close</button>
+          <button type="button" class="add-employee-btn" id="save-payhead-btn">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for generating salary -->
+  <div class="modal fade" id="generate-salary-modal" tabindex="-1" role="dialog" aria-labelledby="generateSalaryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="generateSalaryModalLabel">Generate Salary</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="generate-salary-form">
+            <div class="form-group">
+              <label for="salary-employee">Employee</label>
+              <select class="form-control" id="salary-employee" required>
+                <option value="">Select Employee</option>
+                <!-- Employees will be loaded here -->
+              </select>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="payment-cycle">Payment Cycle</label>
+                  <select class="form-control" id="payment-cycle" onchange="toggleWeekSelection()" required>
+                    <option value="monthly">Monthly</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="15days">15 Days</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="salary-gen-month">Month</label>
+                  <select class="form-control" id="salary-gen-month" required>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="salary-gen-year">Year</label>
+                  <select class="form-control" id="salary-gen-year" required>
+                    <!-- Years will be dynamically populated -->
+                  </select>
+                </div>
+              </div>
+            </div>
+              <div class="row" id="half-selection-container" style="display: none;">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="salary-half">Half</label>
+                  <select class="form-control" id="salary-half" required>
+                    <option value="1">1-15</option>
+                    <option value="2">16 - End</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="row" id="week-selection-container" style="display: none;">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="salary-week">Week</label>
+                  <select class="form-control" id="salary-week" required>
+                    <option value="1">Week 1</option>
+                    <option value="2">Week 2</option>
+                    <option value="3">Week 3</option>
+                    <option value="4">Week 4</option>
+                    <option value="5">Week 5 (if applicable)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- Grocery-specific components section -->
+          <div id="grocery-components" class="row mb-3 p-2" style="background-color: #f8f9fa; border-radius: 5px;">
+            <div class="col-12">
+              <h6 class="mb-3">Grocery-Specific Components</h6>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="days-worked">Days Worked</label>
+                <input type="number" class="form-control" id="days-worked" placeholder="Days" min="0" max="31" step="1">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="holiday-pay-input">Holiday Pay</label>
+                <input type="number" class="form-control" id="holiday-pay-input" placeholder="Amount" value="0" min="0" step="0.01">
+              </div>
+            </div>
+            <div class="col-md-4">
+
+            </div>
+          </div>
+            
+            <!-- Signature is captured once in the Add Employee modal -->
+            
+            <h5 class="mt-3">Earnings</h5>
+            <div id="earnings-container">
+              <!-- Earnings will be loaded here -->
+            </div>
+            <h5 class="mt-3">Deductions</h5>
+            <div id="deductions-container">
+              <!-- Deductions will be loaded here -->
+            </div>
+            <div class="row mt-3">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Total Earnings</label>
+                  <h4 id="total-earnings">₱0.00</h4>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Total Deductions</label>
+                  <h4 id="total-deductions">₱0.00</h4>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>Net Salary</label>
+                  <h4 id="net-salary">₱0.00</h4>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="action-btn" data-dismiss="modal">Close</button>
+          <button type="button" class="add-employee-btn" id="save-salary-btn">Generate</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for viewing salary slip -->
+  <div class="modal fade" id="salary-slip-modal" tabindex="-1" role="dialog" aria-labelledby="salarySlipModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="salarySlipModalLabel">Salary Slip</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="salary-slip-content">
+          <!-- Salary slip content will be loaded here -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="action-btn" data-dismiss="modal">Close</button>
+          <button type="button" class="add-employee-btn" id="print-salary-slip-btn">Print</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for selecting employee for report -->
+  <div class="modal fade" id="employee-report-select-modal" tabindex="-1" role="dialog" aria-labelledby="employeeReportSelectModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="employeeReportSelectModalLabel">Select Employee</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="report-employee-select">Employee</label>
+            <select class="form-control" id="report-employee-select">
+              <option value="all">All Employees</option>
+              <!-- Employees will be loaded here -->
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="action-btn" data-dismiss="modal">Close</button>
+          <button type="button" class="add-employee-btn" id="generate-employee-report-btn">Generate Report</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for displaying employee report -->
+  <div class="modal fade employee-report-modal" id="employee-report-modal" tabindex="-1" role="dialog" aria-labelledby="employeeReportModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="employeeReportModalLabel">Employee Report</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="employee-report-content">
+          <!-- Employee report content will be loaded here -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="action-btn" data-dismiss="modal">Close</button>
+          <button type="button" class="add-employee-btn" id="print-employee-report-btn">Print</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for selecting period for salary report -->
+  <div class="modal fade" id="salary-report-modal" tabindex="-1" role="dialog" aria-labelledby="salaryReportModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="salaryReportModalLabel">Select Period</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="report-month-select">Month</label>
+                <select class="form-control" id="report-month-select">
+                  <option value="1">January</option>
+                  <option value="2">February</option>
+                  <option value="3">March</option>
+                  <option value="4">April</option>
+                  <option value="5">May</option>
+                  <option value="6">June</option>
+                  <option value="7">July</option>
+                  <option value="8">August</option>
+                  <option value="9">September</option>
+                  <option value="10">October</option>
+                  <option value="11">November</option>
+                  <option value="12">December</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label for="report-year-select">Year</label>
+                <select class="form-control" id="report-year-select">
+                  <!-- Years will be dynamically populated -->
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="action-btn" data-dismiss="modal">Close</button>
+          <button type="button" class="add-employee-btn" id="generate-salary-report-btn">Generate Report</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for displaying salary report -->
+  <div class="modal fade" id="salary-report-view-modal" tabindex="-1" role="dialog" aria-labelledby="salaryReportViewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="salaryReportViewModalLabel">Salary Report</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="salary-report-content">
+          <!-- Salary report content will be loaded here -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="action-btn" data-dismiss="modal">Close</button>
+          <button type="button" class="add-employee-btn" id="print-salary-report-btn">Print</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for displaying department report -->
+  <div class="modal fade" id="department-report-modal" tabindex="-1" role="dialog" aria-labelledby="departmentReportModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="departmentReportModalLabel">Department Report</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="department-report-content">
+          <!-- Department report content will be loaded here -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="action-btn" data-dismiss="modal">Close</button>
+          <button type="button" class="add-employee-btn" id="print-department-report-btn">Print</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2FA Authentication Modal -->
+  <div class="modal fade" id="twofa-modal" tabindex="-1" role="dialog" aria-labelledby="twofaModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="twofaModalLabel">Two-Factor Authentication</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="twofa-modal-body">
+          <!-- QR code and instructions will be injected here -->
+        </div>
+        <div class="modal-footer">
+          <input type="text" id="twofa-code-input" class="form-control" placeholder="Enter 6-digit code" maxlength="6">
+          <button type="button" class="btn btn-primary" id="verify-twofa-btn">Verify</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Print functionality now uses direct printing without preview -->
+
+  <!-- Employee Attendance History Modal -->
+  <div class="modal fade" id="attendance-history-modal" tabindex="-1" role="dialog" aria-labelledby="attendanceHistoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="attendanceHistoryModalLabel">Attendance History</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="employee-info-header mb-3">
+            <h6 id="attendance-employee-name" class="mb-1"></h6>
+            <small class="text-muted" id="attendance-employee-details"></small>
+          </div>
+          
+          <div class="attendance-filters mb-3">
+            <div class="row">
+              <div class="col-md-4">
+                <label for="attendance-date-from" class="form-label">From Date</label>
+                <input type="date" class="form-control" id="attendance-date-from">
+              </div>
+              <div class="col-md-4">
+                <label for="attendance-date-to" class="form-label">To Date</label>
+                <input type="date" class="form-control" id="attendance-date-to">
+              </div>
+              <div class="col-md-4">
+                <label for="attendance-type-filter" class="form-label">Type</label>
+                <select class="form-control" id="attendance-type-filter">
+                  <option value="all">All Types</option>
+                  <option value="in">Time In</option>
+                  <option value="out">Time Out</option>
+                </select>
+              </div>
+            </div>
+            <div class="row mt-2">
+              <div class="col-md-12">
+                <button type="button" class="btn btn-primary btn-sm" id="filter-attendance-btn">Filter</button>
+                <button type="button" class="btn btn-secondary btn-sm" id="clear-attendance-filter-btn">Clear</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="attendance-summary mb-3">
+            <div class="row">
+              <div class="col-md-3">
+                <div class="summary-card">
+                  <div class="summary-number" id="total-records">0</div>
+                  <div class="summary-label">Total Records</div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="summary-card">
+                  <div class="summary-number" id="total-time-in">0</div>
+                  <div class="summary-label">Time In</div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="summary-card">
+                  <div class="summary-number" id="total-time-out">0</div>
+                  <div class="summary-label">Time Out</div>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="summary-card">
+                  <div class="summary-number" id="total-days">0</div>
+                  <div class="summary-label">Days Present</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="attendance-history-table">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Type</th>
+                  <th>Day</th>
+                </tr>
+              </thead>
+              <tbody id="employee-attendance-list">
+                <!-- Employee attendance records will be loaded here -->
+              </tbody>
+            </table>
+            <div class="text-center" id="no-attendance-message" style="display: none;">
+              <p class="text-muted">No attendance records found for the selected period.</p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="export-attendance-btn">Export to CSV</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+  <script src="../node_modules/popper.js/dist/umd/popper.min.js"></script>
+  <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script src="../node_modules/chart.js/dist/chart.min.js"></script>
+  <script src="../node_modules/moment/min/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.5/dist/signature_pad.umd.min.js"></script>
+  <script src="js/notify.js"></script>
+  <script src="js/signature.js"></script>
+  <script src="js/app.js"></script>
+    <script src="js/dialog.js"></script>
+  <script src="js/attendance.js"></script>
+</body>
+</html>

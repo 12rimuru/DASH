@@ -1,0 +1,77 @@
+/* Custom Dialog Styles */
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1050;
+}
+
+.dialog-box {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 400px;
+  padding: 24px;
+  text-align: center;
+  transform: scale(0.9);
+  opacity: 0;
+  transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+}
+
+.dialog-overlay.active .dialog-box {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.dialog-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.dialog-message {
+  font-size: 16px;
+  margin-bottom: 24px;
+  color: #555;
+}
+
+.dialog-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.dialog-btn {
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.dialog-btn-confirm {
+  background-color: #17423B;
+  color: #fff;
+}
+
+.dialog-btn-confirm:hover {
+  background-color: #0F3229;
+}
+
+.dialog-btn-cancel {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.dialog-btn-cancel:hover {
+  background-color: #e0e0e0;
+}

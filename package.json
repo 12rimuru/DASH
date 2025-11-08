@@ -1,0 +1,56 @@
+{
+  "name": "electron-payroll",
+  "version": "1.0.0",
+  "description": "Payroll Management System Desktop Application",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "set NODE_ENV=development && electron . --dev",
+    "build": "electron-builder",
+    "icon:gen": "node scripts/generate-icon.js"
+  },
+  "author": "Electron Payroll Team",
+  "license": "MIT",
+  "dependencies": {
+    "bootstrap": "^4.6.0",
+    "chart.js": "^3.7.0",
+    "electron-store": "^8.0.1",
+    "jquery": "^3.6.0",
+    "moment": "^2.29.1",
+    "otplib": "^12.0.1",
+    "popper.js": "^1.16.1",
+    "qrcode": "^1.5.4",
+    "speakeasy": "^2.0.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "electron": "^16.0.0",
+    "electron-builder": "^22.14.5",
+    "electron-reload": "^1.5.0",
+    "electron-reloader": "^1.2.3",
+    "png-to-ico": "^2.1.8"
+  },
+  "build": {
+    "appId": "com.electron.payroll",
+    "productName": "DASH",
+    "directories": {
+      "output": "dist2"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icons/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "installerIcon": "assets/icons/icon.ico",
+      "uninstallerIcon": "assets/icons/icon.ico",
+      "shortcutName": "DASH",
+      "deleteAppDataOnUninstall": true,
+      "include": "build/uninstaller.nsh"
+    }
+  }
+}

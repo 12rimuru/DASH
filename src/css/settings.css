@@ -1,0 +1,90 @@
+/* Settings Tab Styles */
+
+/* Card Styles */
+#settings-tab .card {
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  height: 100%;
+  margin-bottom: 20px;
+}
+
+#settings-tab .card-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #17423B;
+}
+
+#settings-tab h6 {
+  font-size: 15px;
+  font-weight: 500;
+  color: #555;
+}
+
+/* Form Styles */
+#settings-tab .form-control {
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  height: auto;
+  font-size: 14px;
+}
+
+#settings-tab .form-control:focus {
+  border-color: #aaa;
+  box-shadow: 0 0 0 0.2rem rgba(0,0,0,0.05);
+}
+
+#settings-tab label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+}
+
+/* Button Styles */
+#settings-tab .btn-dark {
+  background-color: #0F1923;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 15px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-top: 10px;
+  text-align: center;
+}
+
+#settings-tab .btn-dark:hover {
+  background-color: #1a2530;
+  transform: translateY(-1px);
+}
+
+/* Checkbox Styles */
+#settings-tab .form-check-input {
+  width: 18px;
+  height: 18px;
+  margin-top: 0.2rem;
+}
+
+#settings-tab .form-check-label {
+  padding-left: 5px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  #settings-tab .card {
+    margin-bottom: 15px;
+  }
+}
+
+.section-title {
+  background-color: #000;
+  color: #fff;
+  padding: 3px 5px;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 3px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}

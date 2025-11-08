@@ -1,0 +1,206 @@
+/* Reports Tab Styles */
+
+#report-cards .card {
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  height: 100%;
+  margin-bottom: 20px;
+  background-color: white;
+  padding: 10px;
+  text-decoration: none;
+}
+
+#report-cards .card-body {
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  border-bottom: none;
+}
+
+#report-cards .card-title {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: #10302F;
+  border-bottom: none;
+  text-decoration: none;
+}
+
+#report-cards img {
+  width: 60px;
+  height: 60px;
+  margin-right: 15px;
+  object-fit: contain;
+}
+
+#report-cards .btn-generate {
+  background-color: #0F1923;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 15px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+#report-cards .btn-generate:hover {
+  background-color: #1a2530;
+  transform: translateY(-1px);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  #reports-section .card {
+    margin-bottom: 15px;
+  }
+}
+
+.section-title {
+  background-color: #000;
+  color: #fff;
+  padding: 3px 5px;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 3px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+.report-container {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+  padding: 32px 40px;
+  max-width: 900px;
+  margin: 40px auto;
+}
+.report-header {
+  border-bottom: 1px solid #e3e3e3;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+}
+.employee-section {
+  background: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  margin-bottom: 32px;
+  padding: 24px 32px;
+  border: 1px solid #e3e3e3;
+}
+.employee-section h4 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 18px;
+}
+.employee-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 32px;
+}
+.employee-details div {
+  font-size: 1rem;
+  color: #333;
+  padding: 4px 0;
+}
+.employee-details span {
+  font-weight: 500;
+  color: #555;
+}
+.employee-report-modal .modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* Wide landscape layout for report modals (screen) */
+#salary-report-view-modal .modal-dialog,
+#department-report-modal .modal-dialog,
+.employee-report-modal .modal-dialog {
+  max-width: 95vw;
+  width: 95vw;
+}
+
+#salary-report-content,
+#department-report-content,
+#employee-report-content {
+  overflow-x: auto;
+}
+
+#salary-report-content .report-container,
+#department-report-content .report-container,
+#employee-report-content .report-container {
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding: 16px 20px;
+}
+
+.report-content table.table {
+  width: 100%;
+}
+
+/* Department section styling */
+.department-section {
+  background: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  margin-bottom: 32px;
+  padding: 24px 32px;
+  border: 1px solid #e3e3e3;
+}
+.department-section h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 14px;
+}
+
+/* Print layout: landscape orientation and page breaks by department */
+@page {
+  size: letter landscape;
+  margin: 10mm;
+}
+
+@media print {
+  /* Hide everything except the print preview modal so styles remain intact */
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* Print preview styles removed */
+
+  /* Ensure colors and subtle backgrounds are printed */
+  #print-preview-content,
+  .employee-section {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Expand report content to full page width for landscape printing */
+  .report-container {
+    max-width: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 10mm !important;
+  }
+
+  /* Ensure print-preview content is visible */
+  #print-preview-content,
+  #print-preview-content * {
+    visibility: visible !important;
+  }
+
+  /* Avoid breaking inside department blocks; start new page for each next department */
+  .department-section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  .page-break {
+    break-before: page;
+    page-break-before: always;
+  }
+}

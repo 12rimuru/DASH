@@ -1,0 +1,225 @@
+/* Salary Table Styling */
+#salary-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 5px;
+  background-color: #fff;
+  border: none;
+}
+
+#salary-table thead th {
+  background-color: transparent;
+  color: #333;
+  font-weight: 600;
+  padding: 12px 15px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+#salary-table tbody tr {
+  border: none;
+}
+
+#salary-table tbody tr:hover {
+  background-color: transparent;
+}
+
+#salary-table tbody td {
+  padding: 15px;
+  color: #666;
+  border: 1px solid #ddd;
+}
+
+/* Action buttons in salary table */
+.salary-action-btn {
+  background-color: transparent;
+  color: #17423B;
+  border: 1px solid #17423B;
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.salary-action-btn:hover {
+  background-color: #17423B;
+  color: white;
+}
+
+.salary-delete-btn {
+  background-color: transparent;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+  margin-left: 5px;
+}
+
+.salary-delete-btn:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* Ensure action column keeps buttons in a single row */
+#salary-table thead th:last-child,
+#salary-table tbody td:last-child {
+  white-space: nowrap;
+  text-align: center;
+  min-width: 120px;
+}
+
+/* Horizontal action buttons container for salary table */
+.salary-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+#salary-section .add-employee-btn:hover {
+  background-color: #0F3229;
+}
+
+/* Bulk action buttons spacing and icon alignment */
+#delete-selected-salaries-btn {
+  margin-right: 8px;
+}
+#delete-selected-salaries-btn,
+#print-selected-salaries-btn {
+  display: inline-flex;
+  align-items: center;
+}
+#delete-selected-salaries-btn i,
+#print-selected-salaries-btn i {
+  margin-right: 6px;
+}
+
+/* Override print selected button color */
+#print-selected-salaries-btn {
+  color: #17423B !important;
+  border-color: #17423B !important;
+}
+
+#print-selected-salaries-btn:hover,
+#print-selected-salaries-btn:focus {
+  background-color: #17423B !important;
+  color: #fff !important;
+  border-color: #17423B !important;
+}
+
+/* Filter controls */
+.salary-controls {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  gap: 20px;
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filter-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin: 0;
+  margin-right: 5px;
+  white-space: nowrap;
+}
+
+.month-selector,
+.year-selector {
+  min-width: 100px;
+  margin: 0;
+  width: 100%;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.form-select {
+  height: 38px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  font-size: 14px;
+  background-color: #fff;
+  transition: border-color 0.15s ease-in-out;
+  width: 100%;
+  color: #333;
+}
+
+.form-select:focus {
+  border-color: #17423B;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(23, 66, 59, 0.25);
+}
+
+.filter-button-container {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  max-width: none;
+}
+
+.filter-btn {
+  background-color: #17423B;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 15px;
+  font-size: 14px;
+  height: 38px;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+  width: 100%;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  margin-top: 21px;
+  flex: 1;
+}
+
+.filter-btn:hover {
+  background-color: #0F3229;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .filter-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .month-selector,
+  .year-selector {
+    width: 100%;
+    min-width: 100%;
+  }
+  
+  .filter-button-container {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  .filter-btn {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+.section-title {
+  color: #212529 !important;
+  font-family: Tahoma, Geneva, Verdana, sans-serif !important;
+  font-size: 24px !important;
+  font-weight: 400 !important;
+  margin: 0 0 8px 0 !important;
+  background: none !important;
+  padding: 0 !important;
+  line-height: 1.2 !important;
+  text-align: left !important;
+}

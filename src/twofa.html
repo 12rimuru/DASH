@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2FA Authentication</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background: #fff;
+            font-family: 'Montserrat', Arial, sans-serif;
+        }
+        .twofa-container {
+            max-width: 420px;
+            margin: 60px auto;
+            background: #fff;
+            padding: 40px 32px 32px 32px;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        .twofa-title {
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+            color: #18423a;
+        }
+        .twofa-desc {
+            color: #18423a;
+            font-size: 1em;
+            margin-bottom: 24px;
+        }
+        .twofa-img {
+            width: 290px;
+            margin-bottom: 24px;
+        }
+        .qr-code {
+            display: none;
+            margin: 0 auto 16px auto;
+        }
+        .manual-key {
+            font-family: monospace;
+            background: #f3f3f3;
+            padding: 8px;
+            border-radius: 6px;
+            text-align: center;
+            margin-bottom: 24px;
+            letter-spacing: 2px;
+        }
+        .code-label {
+            font-size: 1em;
+            margin-bottom: 8px;
+            color: #18423a;
+            text-align: left;
+        }
+        .code-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .code-box {
+            width: 48px;
+            height: 48px;
+            font-size: 2em;
+            text-align: center;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 8px;
+            background: #fafafa;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .code-box:focus {
+            border-color: #18423a;
+        }
+        .twofa-btn {
+            width: 100%;
+            padding: 12px;
+            background: #18423a;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+        .twofa-btn:disabled {
+            background: #aaa;
+        }
+        .twofa-error {
+            color: #d9534f;
+            text-align: center;
+            margin-top: 12px;
+            font-size: 1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="twofa-container">
+        <div class="twofa-title">WELCOME</div>
+        <div class="twofa-desc">To log in, enter the verification code below</div>
+        <img src="../assets/images/keys.png" class="twofa-img" alt="Security Illustration">
+        <img id="qr-code" class="qr-code" alt="Scan this with Google Authenticator">
+        <div class="manual-key" id="manual-key"></div>
+        <div class="code-label">Verification Code</div>
+        <div class="code-inputs">
+            <input type="text" maxlength="1" class="code-box" id="code-0" autocomplete="off">
+            <input type="text" maxlength="1" class="code-box" id="code-1" autocomplete="off">
+            <input type="text" maxlength="1" class="code-box" id="code-2" autocomplete="off">
+            <input type="text" maxlength="1" class="code-box" id="code-3" autocomplete="off">
+            <input type="text" maxlength="1" class="code-box" id="code-4" autocomplete="off">
+            <input type="text" maxlength="1" class="code-box" id="code-5" autocomplete="off">
+        </div>
+        <button class="twofa-btn" id="verify-btn">Confirm</button>
+        <div class="twofa-error" id="error-msg"></div>
+    </div>
+    <script src="js/twofa.js"></script>
+</body>
+</html>

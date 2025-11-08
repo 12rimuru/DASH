@@ -1,0 +1,21 @@
+directories:
+  output: dist2
+  buildResources: build
+appId: com.electron.payroll
+productName: DASH
+win:
+  target: nsis
+  icon: assets/icons/icon.ico
+nsis:
+  oneClick: false
+  perMachine: false
+  allowElevation: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  installerIcon: assets/icons/icon.ico
+  uninstallerIcon: assets/icons/icon.ico
+  shortcutName: DASH
+  deleteAppDataOnUninstall: true
+  include: build/uninstaller.nsh
+files: []
+electronVersion: 16.2.8
